@@ -28,7 +28,7 @@ export const defaultData = {
       conference: "International Interdisciplinary Conference on Emerging Technologies, Engineering & Applied Sciences 2026",
       status: "Accepted for Presentation",
       year: "2026",
-      description: "Research accepted and selected for presentation at NICE TEAS 2026, a national-level interdisciplinary conference focusing on emerging technologies and applied sciences."
+      description: "Research accepted and selected for presentation at NICE TEAS 2026, an international-level interdisciplinary conference focusing on emerging technologies and applied sciences."
     }
   ],
   experience: [
