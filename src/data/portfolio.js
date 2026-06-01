@@ -25,7 +25,7 @@ export const defaultData = {
     {
       id: 1,
       title: "Accepted Research Paper — NICE TEAS 2026",
-      conference: "National Interdisciplinary Conference on Emerging Technologies, Engineering & Applied Sciences 2026",
+      conference: "International Interdisciplinary Conference on Emerging Technologies, Engineering & Applied Sciences 2026",
       status: "Accepted for Presentation",
       year: "2026",
       description: "Research accepted and selected for presentation at NICE TEAS 2026, a national-level interdisciplinary conference focusing on emerging technologies and applied sciences."
@@ -96,7 +96,7 @@ export const defaultData = {
         "Full-stack delivery leading a team of 5 interns"
       ],
       category: "Full-Stack / AI",
-      github: "https://github.com/RohitThanvi",
+      github: "https://github.com/RohitThanvi/Mind-Grid.git",
       color: "#2563EB"
     },
     {
@@ -111,7 +111,7 @@ export const defaultData = {
         "Processes 9 environmental metrics across Sentinel-2/Landsat/MODIS datasets"
       ],
       category: "AI / Geospatial",
-      github: "https://github.com/RohitThanvi",
+      github: "https://github.com/RohitThanvi/Vayu.git",
       link: "#",
       color: "#10B981"
     },
@@ -157,7 +157,7 @@ export const defaultData = {
         "Zobrist hashing + MVV-LVA move ordering"
       ],
       category: "Systems / C++",
-      github: "https://github.com/RohitThanvi",
+      github: "https://github.com/RohitThanvi/Chess-Engine.git",
       color: "#F59E0B"
     }
   ],
