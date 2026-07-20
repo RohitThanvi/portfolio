@@ -40,11 +40,11 @@ export const defaultData = {
   research: [
     {
       id: 1,
-      title: "Accepted Research Paper — NICE TEAS 2026",
-      conference: "International Interdisciplinary Conference on Emerging Technologies, Engineering & Applied Sciences 2026",
-      status: "Accepted for Presentation",
+      title: "Data-Efficient Continuous Manifold Reconstruction of GaN HEMT Physics via Fourier-Based Kolmogorov–Arnold Networks",
+      conference: "2nd Networking International Conference on Emerging Trends in Expert Applications and Security (NICE-TEAS Europe 2026) — Dept. of Digital Systems, University of Thessaly, Larissa, Greece",
+      status: "Presented",
       year: "2026",
-      description: "Research accepted and selected for presentation at NICE TEAS 2026, an international-level interdisciplinary conference focusing on emerging technologies and applied sciences."
+      description: "Presented at NICE-TEAS Europe 2026 (July 3–5, 2026), hosted by the Department of Digital Systems, University of Thessaly, in partnership with Apex University Jaipur, indexed under Springer Scopus."
     }
   ],
   experience: [

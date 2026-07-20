@@ -4,11 +4,11 @@ import { useInView } from 'react-intersection-observer';
 import { useAdmin } from '../context/AdminContext';
 
 const CATEGORY_META = {
-  languages:  { label: 'Languages',           color: '#C9A84C', icon: '{ }' },
-  aiml:       { label: 'AI / ML',              color: '#2563EB', icon: '∿' },
-  backend:    { label: 'Backend & Systems',    color: '#10B981', icon: '⚙' },
-  cloud:      { label: 'Cloud & Infra',        color: '#8B5CF6', icon: '☁' },
-  databases:  { label: 'Databases & Retrieval',color: '#EF4444', icon: '⛁' },
+  languages:  { label: 'Languages',           shortLabel: 'Languages', color: '#C9A84C', icon: '{ }' },
+  aiml:       { label: 'AI / ML',              shortLabel: 'AI/ML',    color: '#2563EB', icon: '∿' },
+  backend:    { label: 'Backend & Systems',    shortLabel: 'Backend',  color: '#10B981', icon: '⚙' },
+  cloud:      { label: 'Cloud & Infra',        shortLabel: 'Cloud',    color: '#8B5CF6', icon: '☁' },
+  databases:  { label: 'Databases & Retrieval',shortLabel: 'Databases',color: '#EF4444', icon: '⛁' },
 };
 
 function SkillOrb({ skill, delay, color }) {
@@ -309,34 +309,36 @@ export default function Skills() {
 
 function SkillRadar({ activeCategory, skills }) {
   const meta = CATEGORY_META[activeCategory] || Object.values(CATEGORY_META)[0];
-  const activeSkills = (activeCategory && skills[activeCategory]) ? skills[activeCategory] : [];
   const size = 300;
   const cx = size / 2;
   const cy = size / 2;
   const levels = 4;
+  const plotMax = cx - 45;      // radius of the actual chart (rings/polygon)
+  const labelRadius = cx - 15;  // where labels are anchored, just outside the chart
+  const pad = 58;               // extra canvas around the plot so labels never clip
 
   const categoryKeys = Object.keys(CATEGORY_META);
   const points = categoryKeys.map((key, i) => {
     const angle = (i / categoryKeys.length) * Math.PI * 2 - Math.PI / 2;
-    const r = (cx - 30) * ((skills[key]?.length || 0) / 12);
+    const r = plotMax * ((skills[key]?.length || 0) / 12);
     return {
       x: cx + r * Math.cos(angle),
       y: cy + r * Math.sin(angle),
-      label: CATEGORY_META[key].label.split(' / ')[0],
+      label: CATEGORY_META[key].shortLabel || CATEGORY_META[key].label,
       color: CATEGORY_META[key].color,
       angle,
-      maxX: cx + (cx - 30) * Math.cos(angle),
-      maxY: cy + (cx - 30) * Math.sin(angle),
+      maxX: cx + plotMax * Math.cos(angle),
+      maxY: cy + plotMax * Math.sin(angle),
     };
   });
 
   const polyPath = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ') + 'Z';
 
   return (
-    <svg viewBox={`0 0 ${size} ${size}`} xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox={`${-pad} ${-pad} ${size + pad * 2} ${size + pad * 2}`} xmlns="http://www.w3.org/2000/svg">
       {/* Grid rings */}
       {Array.from({ length: levels }).map((_, l) => {
-        const r = ((l + 1) / levels) * (cx - 30);
+        const r = ((l + 1) / levels) * plotMax;
         const pts = categoryKeys.map((_, i) => {
           const angle = (i / categoryKeys.length) * Math.PI * 2 - Math.PI / 2;
           return `${cx + r * Math.cos(angle)},${cy + r * Math.sin(angle)}`;
@@ -381,15 +383,22 @@ function SkillRadar({ activeCategory, skills }) {
         />
       ))}
 
-      {/* Labels */}
+      {/* Labels — anchor direction follows which side of the chart the
+          label sits on, so text grows outward/away from center instead
+          of being centered on a point right at the chart's edge. That's
+          what was clipping "Backend & Systems" / "Databases & Retrieval"
+          before: a centered anchor with almost no margin cut off both
+          sides of longer labels. */}
       {points.map((p, i) => {
-        const lx = cx + (cx - 10) * Math.cos(p.angle);
-        const ly = cy + (cx - 10) * Math.sin(p.angle);
+        const lx = cx + labelRadius * Math.cos(p.angle);
+        const ly = cy + labelRadius * Math.sin(p.angle);
+        const cos = Math.cos(p.angle);
+        const anchor = cos > 0.2 ? 'start' : cos < -0.2 ? 'end' : 'middle';
         return (
           <text
             key={i}
             x={lx} y={ly}
-            textAnchor="middle"
+            textAnchor={anchor}
             dominantBaseline="middle"
             fill={CATEGORY_META[categoryKeys[i]].color}
             fontSize="9"

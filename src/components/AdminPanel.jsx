@@ -13,6 +13,7 @@ export default function AdminPanel() {
   const tabs = [
     { key: 'hero', label: 'Hero' },
     { key: 'about', label: 'About' },
+    { key: 'experience', label: 'Exp' },
     { key: 'projects', label: 'Projects' },
     { key: 'research', label: 'Research' },
   ];
@@ -21,14 +22,14 @@ export default function AdminPanel() {
     updateData('hero', { ...siteData.hero, [field]: value });
   };
 
+  // ---- Research ----
   const updateResearchField = (idx, field, value) => {
-    const updated = [...siteData.research];
+    const updated = [...(siteData.research || [])];
     updated[idx] = { ...updated[idx], [field]: value };
     updateData('research', updated);
   };
-
   const addResearchPaper = () => {
-    updateData('research', [...siteData.research, {
+    updateData('research', [...(siteData.research || []), {
       id: Date.now(),
       title: "New Research Paper",
       conference: "Conference Name, Year",
@@ -37,9 +38,57 @@ export default function AdminPanel() {
       description: "Brief description of the paper."
     }]);
   };
-
   const removeResearch = (idx) => {
-    updateData('research', siteData.research.filter((_, i) => i !== idx));
+    updateData('research', (siteData.research || []).filter((_, i) => i !== idx));
+  };
+
+  // ---- Experience ----
+  const updateExperienceField = (idx, field, value) => {
+    const updated = [...(siteData.experience || [])];
+    updated[idx] = { ...updated[idx], [field]: value };
+    updateData('experience', updated);
+  };
+  const updateExperienceBullets = (idx, text) => {
+    updateExperienceField(idx, 'bullets', text.split('\n').map(s => s.trim()).filter(Boolean));
+  };
+  const addExperience = () => {
+    updateData('experience', [...(siteData.experience || []), {
+      id: Date.now(),
+      company: "New Company",
+      role: "Role Title",
+      period: "Month YYYY – Month YYYY",
+      location: "City, India",
+      bullets: ["Bullet point one"]
+    }]);
+  };
+  const removeExperience = (idx) => {
+    updateData('experience', (siteData.experience || []).filter((_, i) => i !== idx));
+  };
+
+  // ---- Projects ----
+  const updateProjectField = (idx, field, value) => {
+    const updated = [...(siteData.projects || [])];
+    updated[idx] = { ...updated[idx], [field]: value };
+    updateData('projects', updated);
+  };
+  const updateProjectListField = (idx, field, text) => {
+    updateProjectField(idx, field, text.split('\n').map(s => s.trim()).filter(Boolean));
+  };
+  const addProject = () => {
+    updateData('projects', [...(siteData.projects || []), {
+      id: Date.now(),
+      name: "New Project",
+      fullName: "New Project: Full Name",
+      description: "Project description goes here.",
+      tech: ["Tech1", "Tech2"],
+      highlights: ["Key achievement one"],
+      category: "AI / Research",
+      github: "https://github.com/RohitThanvi",
+      color: "#C9A84C"
+    }]);
+  };
+  const removeProject = (idx) => {
+    updateData('projects', (siteData.projects || []).filter((_, i) => i !== idx));
   };
 
   return (
@@ -83,7 +132,7 @@ export default function AdminPanel() {
               </div>
 
               {editMode && (
-                <p className="panel-hint">Click on text with underline to edit inline.</p>
+                <p className="panel-hint">Click on text with underline (Home/About) to edit inline. Everything else is edited below.</p>
               )}
 
               {/* Tabs */}
@@ -101,25 +150,36 @@ export default function AdminPanel() {
 
               <div className="panel-content">
                 {activeTab === 'hero' && (
-                  <HeroEditor data={siteData.hero} onChange={updateHeroField} />
+                  <HeroEditor data={siteData.hero || {}} onChange={updateHeroField} />
                 )}
                 {activeTab === 'research' && (
                   <ResearchEditor
-                    data={siteData.research}
+                    data={siteData.research || []}
                     onUpdate={updateResearchField}
                     onAdd={addResearchPaper}
                     onRemove={removeResearch}
                   />
                 )}
-                {activeTab === 'about' && (
-                  <div className="panel-note">
-                    Use Inline Edit Mode to edit About text directly on the page.
-                  </div>
+                {activeTab === 'experience' && (
+                  <ExperienceEditor
+                    data={siteData.experience || []}
+                    onUpdate={updateExperienceField}
+                    onUpdateBullets={updateExperienceBullets}
+                    onAdd={addExperience}
+                    onRemove={removeExperience}
+                  />
                 )}
                 {activeTab === 'projects' && (
-                  <div className="panel-note">
-                    Go to Projects page and use the "+ Add Project" button while in Edit Mode to add new projects.
-                  </div>
+                  <ProjectsEditor
+                    data={siteData.projects || []}
+                    onUpdate={updateProjectField}
+                    onUpdateList={updateProjectListField}
+                    onAdd={addProject}
+                    onRemove={removeProject}
+                  />
+                )}
+                {activeTab === 'about' && (
+                  <AboutEditor data={siteData.about || {}} onChange={(field, value) => updateData('about', { ...siteData.about, [field]: value })} />
                 )}
               </div>
 
@@ -147,7 +207,7 @@ export default function AdminPanel() {
           position: fixed;
           bottom: 2rem;
           right: 2rem;
-          width: 320px;
+          width: 340px;
           background: var(--navy);
           border: 1px solid var(--gold-dim);
           z-index: 9998;
@@ -217,6 +277,7 @@ export default function AdminPanel() {
         .panel-hint {
           font-size: 0.6rem;
           letter-spacing: 0.05em;
+          line-height: 1.5;
           color: var(--gold-dim);
           padding: 0.5rem 1rem;
           background: rgba(201,168,76,0.04);
@@ -228,10 +289,10 @@ export default function AdminPanel() {
         .panel-tab {
           flex: 1;
           font-family: var(--font-mono);
-          font-size: 0.6rem;
-          letter-spacing: 0.1em;
+          font-size: 0.58rem;
+          letter-spacing: 0.06em;
           text-transform: uppercase;
-          padding: 0.6rem;
+          padding: 0.6rem 0.2rem;
           background: none;
           border: none;
           color: var(--white-dim);
@@ -241,7 +302,7 @@ export default function AdminPanel() {
         }
         .panel-tab:hover { color: var(--white); }
         .panel-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
-        .panel-content { padding: 1rem; max-height: 280px; overflow-y: auto; }
+        .panel-content { padding: 1rem; max-height: 360px; overflow-y: auto; }
         .panel-content::-webkit-scrollbar { width: 2px; }
         .panel-content::-webkit-scrollbar-thumb { background: var(--gold-dim); }
         .panel-note {
@@ -260,7 +321,7 @@ export default function AdminPanel() {
           display: block;
           margin-bottom: 0.3rem;
         }
-        .field-input {
+        .field-input, .field-textarea {
           width: 100%;
           font-family: var(--font-mono);
           font-size: 0.7rem;
@@ -270,9 +331,17 @@ export default function AdminPanel() {
           padding: 0.4rem 0.6rem;
           outline: none;
           transition: border-color 0.2s ease;
+          box-sizing: border-box;
         }
-        .field-input:focus { border-color: var(--gold); }
-        .research-item {
+        .field-textarea { resize: vertical; min-height: 4.5em; line-height: 1.5; }
+        .field-input:focus, .field-textarea:focus { border-color: var(--gold); }
+        .field-hint {
+          font-size: 0.55rem;
+          color: var(--white-faint);
+          margin-top: 0.25rem;
+          display: block;
+        }
+        .research-item, .list-item {
           border: 1px solid var(--white-faint);
           padding: 0.8rem;
           margin-bottom: 0.8rem;
@@ -366,6 +435,39 @@ function HeroEditor({ data, onChange }) {
   );
 }
 
+function AboutEditor({ data, onChange }) {
+  const textFields = [
+    { key: 'bio', label: 'Bio (paragraph 1)', textarea: true },
+    { key: 'bio2', label: 'Bio (paragraph 2)', textarea: true },
+    { key: 'cgpa', label: 'CGPA' },
+    { key: 'college', label: 'College' },
+    { key: 'degree', label: 'Degree' },
+    { key: 'year', label: 'Years' },
+  ];
+  return (
+    <div>
+      {textFields.map(f => (
+        <div key={f.key} className="field-row">
+          <label className="field-row-label">{f.label}</label>
+          {f.textarea ? (
+            <textarea
+              className="field-textarea"
+              value={data[f.key] || ''}
+              onChange={e => onChange(f.key, e.target.value)}
+            />
+          ) : (
+            <input
+              className="field-input"
+              value={data[f.key] || ''}
+              onChange={e => onChange(f.key, e.target.value)}
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function ResearchEditor({ data, onUpdate, onAdd, onRemove }) {
   return (
     <div>
@@ -391,6 +493,98 @@ function ResearchEditor({ data, onUpdate, onAdd, onRemove }) {
         </div>
       ))}
       <button className="add-btn" onClick={onAdd}>+ Add Paper</button>
+    </div>
+  );
+}
+
+function ExperienceEditor({ data, onUpdate, onUpdateBullets, onAdd, onRemove }) {
+  return (
+    <div>
+      {data.map((exp, idx) => (
+        <div key={exp.id} className="list-item">
+          <button className="remove-btn" onClick={() => onRemove(idx)}>×</button>
+          {[
+            { key: 'company', label: 'Company' },
+            { key: 'role', label: 'Role' },
+            { key: 'period', label: 'Period' },
+            { key: 'location', label: 'Location' },
+          ].map(f => (
+            <div key={f.key} className="field-row">
+              <label className="field-row-label">{f.label}</label>
+              <input
+                className="field-input"
+                value={exp[f.key] || ''}
+                onChange={e => onUpdate(idx, f.key, e.target.value)}
+              />
+            </div>
+          ))}
+          <div className="field-row">
+            <label className="field-row-label">Bullets</label>
+            <textarea
+              className="field-textarea"
+              value={(exp.bullets || []).join('\n')}
+              onChange={e => onUpdateBullets(idx, e.target.value)}
+            />
+            <span className="field-hint">One bullet per line.</span>
+          </div>
+        </div>
+      ))}
+      <button className="add-btn" onClick={onAdd}>+ Add Experience</button>
+    </div>
+  );
+}
+
+function ProjectsEditor({ data, onUpdate, onUpdateList, onAdd, onRemove }) {
+  return (
+    <div>
+      {data.map((proj, idx) => (
+        <div key={proj.id} className="list-item">
+          <button className="remove-btn" onClick={() => onRemove(idx)}>×</button>
+          {[
+            { key: 'name', label: 'Short Name' },
+            { key: 'fullName', label: 'Full Name' },
+            { key: 'category', label: 'Category' },
+            { key: 'github', label: 'GitHub / Link URL' },
+            { key: 'color', label: 'Accent Color (hex)' },
+          ].map(f => (
+            <div key={f.key} className="field-row">
+              <label className="field-row-label">{f.label}</label>
+              <input
+                className="field-input"
+                value={proj[f.key] || ''}
+                onChange={e => onUpdate(idx, f.key, e.target.value)}
+              />
+            </div>
+          ))}
+          <div className="field-row">
+            <label className="field-row-label">Description</label>
+            <textarea
+              className="field-textarea"
+              value={proj.description || ''}
+              onChange={e => onUpdate(idx, 'description', e.target.value)}
+            />
+          </div>
+          <div className="field-row">
+            <label className="field-row-label">Highlights</label>
+            <textarea
+              className="field-textarea"
+              value={(proj.highlights || []).join('\n')}
+              onChange={e => onUpdateList(idx, 'highlights', e.target.value)}
+            />
+            <span className="field-hint">One highlight per line.</span>
+          </div>
+          <div className="field-row">
+            <label className="field-row-label">Tech Stack</label>
+            <textarea
+              className="field-textarea"
+              value={(proj.tech || []).join('\n')}
+              onChange={e => onUpdateList(idx, 'tech', e.target.value)}
+            />
+            <span className="field-hint">One tag per line.</span>
+          </div>
+        </div>
+      ))}
+      <button className="add-btn" onClick={onAdd}>+ Add Project</button>
     </div>
   );
 }
