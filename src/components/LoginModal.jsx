@@ -13,9 +13,9 @@ export default function LoginModal() {
     setLoading(true);
     setError('');
     await new Promise(r => setTimeout(r, 600));
-    const success = login(creds.username, creds.password);
-    if (!success) {
-      setError('Invalid credentials.');
+    const result = await login(creds.username, creds.password);
+    if (!result.success) {
+      setError(result.error || 'Invalid credentials.');
       setLoading(false);
     }
   };

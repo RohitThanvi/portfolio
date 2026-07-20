@@ -20,7 +20,7 @@ function Reveal({ children, delay = 0 }) {
 
 export default function About() {
   const { siteData } = useAdmin();
-  const { about, hero } = siteData;
+  const { about = {}, hero = {} } = siteData;
 
   const certs = siteData.skills?.certs || [];
 

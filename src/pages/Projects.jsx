@@ -69,7 +69,7 @@ function ProjectCard({ project, index }) {
           <p className="project-desc">{project.description}</p>
 
           <div className="project-highlights">
-            {project.highlights.map((h, i) => (
+            {(project.highlights || []).map((h, i) => (
               <div key={i} className="highlight-item">
                 <span className="highlight-dot" style={{ background: project.color }} />
                 <span>{h}</span>
@@ -78,10 +78,10 @@ function ProjectCard({ project, index }) {
           </div>
 
           <div className="project-tech-row">
-            {project.tech.slice(0, 5).map((t, i) => (
+            {(project.tech || []).slice(0, 5).map((t, i) => (
               <span key={i} className="tech-tag">{t}</span>
             ))}
-            {project.tech.length > 5 && (
+            {(project.tech || []).length > 5 && (
               <span className="tech-tag">+{project.tech.length - 5}</span>
             )}
           </div>
@@ -95,11 +95,11 @@ function ProjectCard({ project, index }) {
 
 export default function Projects() {
   const { siteData, isAdmin, editMode, updateData } = useAdmin();
-  const projects = siteData.projects;
+  const projects = siteData.projects || [];
   const [filter, setFilter] = useState('All');
 
-  const categories = ['All', ...new Set(projects.map(p => p.category.split(' / ')[0]))];
-  const filtered = filter === 'All' ? projects : projects.filter(p => p.category.includes(filter));
+  const categories = ['All', ...new Set(projects.map(p => (p.category || '').split(' / ')[0]).filter(Boolean))];
+  const filtered = filter === 'All' ? projects : projects.filter(p => (p.category || '').includes(filter));
 
   const addProject = () => {
     const newP = {

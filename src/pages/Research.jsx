@@ -120,7 +120,7 @@ function ResearchCard({ paper, index }) {
 
 export default function Research() {
   const { siteData } = useAdmin();
-  const { research, hero } = siteData;
+  const { research = [], hero = {} } = siteData;
 
   return (
     <div className="research-page">

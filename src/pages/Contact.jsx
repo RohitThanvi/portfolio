@@ -4,7 +4,7 @@ import { useAdmin } from '../context/AdminContext';
 
 export default function Contact() {
   const { siteData } = useAdmin();
-  const { hero } = siteData;
+  const { hero = {} } = siteData;
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [sent, setSent] = useState(false);
 

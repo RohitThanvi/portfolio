@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AdminProvider } from './context/AdminContext';
+import ErrorBoundary from './components/ErrorBoundary';
 import Navbar from './components/Navbar';
 import Cursor from './components/Cursor';
 import LoginModal from './components/LoginModal';
@@ -54,20 +55,22 @@ function AnimatedRoutes() {
 
 export default function App() {
   return (
-    <AdminProvider>
-      <BrowserRouter>
-        <div className="app">
-          <div className="noise-overlay" />
-          <div className="grid-bg" />
-          <Cursor />
-          <Navbar />
-          <main className="main-content">
-            <AnimatedRoutes />
-          </main>
-          <LoginModal />
-          <AdminPanel />
-        </div>
-      </BrowserRouter>
-    </AdminProvider>
+    <ErrorBoundary>
+      <AdminProvider>
+        <BrowserRouter>
+          <div className="app">
+            <div className="noise-overlay" />
+            <div className="grid-bg" />
+            <Cursor />
+            <Navbar />
+            <main className="main-content">
+              <AnimatedRoutes />
+            </main>
+            <LoginModal />
+            <AdminPanel />
+          </div>
+        </BrowserRouter>
+      </AdminProvider>
+    </ErrorBoundary>
   );
 }

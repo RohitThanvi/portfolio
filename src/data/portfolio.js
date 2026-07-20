@@ -1,7 +1,23 @@
-export const ADMIN_CREDENTIALS = {
-  username: "rohit",
-  password: "admin2025"
-};
+// NOTE ON ADMIN AUTH: this is a static site with no backend, so a fully
+// secure login isn't possible here — anything shipped to the browser can
+// be read in dev tools. What this DOES fix vs before: the real password
+// is no longer sitting in plaintext in the source/bundle (a SHA-256 hash
+// is compared instead), and AdminContext now locks out rapid repeated
+// login attempts. Treat this as "keep casual visitors out", not as
+// bank-grade security.
+export const ADMIN_USERNAME = "rohit";
+// SHA-256 hash of the real password (still "admin2025" — change the
+// password by hashing a new value and swapping it in here).
+export const ADMIN_PASSWORD_HASH =
+  "0e89f223e226ae63268cf39152ab75722e811b89d29efb22a852f1667bd22ae0";
+
+// Bump this whenever `defaultData`'s shape changes in a way that data a
+// visitor already has saved in localStorage might not match (renamed or
+// removed fields, restructured objects, etc). AdminContext uses it to
+// safely fall back to fresh defaults instead of crashing on missing
+// fields — this is what was causing the random "client-side exception"
+// errors when navigating between pages.
+export const DATA_VERSION = 2;
 
 export const defaultData = {
   hero: {
@@ -15,8 +31,8 @@ export const defaultData = {
   },
   about: {
     bio: `AI/ML engineering undergraduate at SKIT Jaipur with a relentless focus on building systems that matter — from production-grade LLM pipelines to real-time cognitive fatigue detection for industrial workers. I work at the intersection of deep learning research and scalable engineering, where models need to run in the real world, not just on paper.`,
-    bio2: `My work spans custom transformer architectures, edge-deployable neural networks, geospatial intelligence platforms, and distributed backend systems. I've built at ISRO, led engineering teams at Brudite, and contributed to systems that serve users across five countries.`,
-    cgpa: "8.99",
+    bio2: `My work spans custom transformer architectures, edge-deployable neural networks, geospatial intelligence platforms, and distributed backend systems. I've built a production legal-AI research platform at CURAJ, worked at ISRO, led engineering teams at Brudite, and contributed to systems that serve users across five countries.`,
+    cgpa: "8.80",
     college: "Swami Keshvanand Institute of Technology",
     degree: "B.Tech in Computer Science Engineering",
     year: "2023 – Present"
@@ -32,6 +48,17 @@ export const defaultData = {
     }
   ],
   experience: [
+    {
+      id: 4,
+      company: "Central University of Rajasthan (CURAJ)",
+      role: "Project Intern",
+      period: "May 2026 – Jul 2026",
+      location: "Ajmer, India",
+      bullets: [
+        "Developed a production-grade, 6-service full-stack Indian legal AI research platform using Docker Compose, FastAPI, Next.js 15, PostgreSQL 16, Qdrant, Redis, and Nginx.",
+        "Streamlined a hybrid RAG pipeline, integrating BM25 and Qdrant HNSW vector search with RRF and Cross-Encoder reranking, to optimize retrieval across 7,700+ legal document chunks."
+      ]
+    },
     {
       id: 1,
       company: "Indian Space Research Organisation (ISRO)",
@@ -73,16 +100,31 @@ export const defaultData = {
       id: 1,
       name: "IndicSLM",
       fullName: "Project SLM: An Indic Language Model",
-      description: "A 16M-parameter decoder-only transformer trained on Indian history and Hindu philosophy, featuring BitLinear ternary quantization for 94% memory reduction and Multi-Head Latent Attention for 16× KV-cache compression.",
-      tech: ["PyTorch", "Transformers", "BPE Tokenization", "BitLinear", "MLA", "DDP"],
+      description: "A 1.5B-parameter decoder-only language model featuring Grouped-Query Attention (GQA), SwiGLU activations, and Rotary Positional Embeddings (RoPE), trained with a distributed multi-GPU pipeline.",
+      tech: ["PyTorch", "Transformers", "GQA", "SwiGLU", "RoPE", "BF16", "APOLLO", "DDP"],
       highlights: [
-        "94% memory footprint reduction via 1.58-bit ternary quantization",
-        "16× KV-cache compression with Multi-Head Latent Attention",
-        "97.9% embedding table RAM reduction with custom 8K BPE tokenizer"
+        "Decoder-only architecture with GQA, SwiGLU, and RoPE",
+        "25% multi-GPU throughput gain via BF16 mixed-precision + the APOLLO optimizer",
+        "Distributed training framework built for scale"
       ],
       category: "LLM / Research",
       github: "https://github.com/RohitThanvi",
       color: "#C9A84C"
+    },
+    {
+      id: 7,
+      name: "CURAJ Legal AI",
+      fullName: "Indian Legal AI Research Platform",
+      description: "A production-grade, 6-service full-stack legal AI research platform built at CURAJ, combining hybrid retrieval with BM25 and vector search to surface relevant case law and statutes.",
+      tech: ["FastAPI", "Next.js 15", "PostgreSQL 16", "Qdrant", "Redis", "Nginx", "Docker Compose"],
+      highlights: [
+        "Hybrid RAG pipeline: BM25 + Qdrant HNSW vector search with RRF fusion",
+        "Cross-Encoder reranking layer for precision on legal queries",
+        "Optimized retrieval across 7,700+ legal document chunks"
+      ],
+      category: "Full-Stack / AI",
+      github: "https://github.com/RohitThanvi",
+      color: "#3B82F6"
     },
     {
       id: 2,
@@ -164,9 +206,9 @@ export const defaultData = {
   skills: {
     languages: ["Python", "C++", "Java", "SQL", "JavaScript"],
     aiml: ["PyTorch", "Transformers", "LLMs", "RAG Pipelines", "BPE Tokenization", "BitLinear Quantization", "Anomaly Detection", "Signal Processing", "EEG/ECG", "CNN", "LSTM"],
-    backend: ["FastAPI", "Flask", "REST APIs", "Microservice Architecture", "Docker", "Linux"],
-    cloud: ["Google Earth Engine", "Render", "Vercel", "Docker", "CI/CD"],
-    databases: ["PostgreSQL", "MongoDB", "MySQL", "Vector Search"],
+    backend: ["FastAPI", "Flask", "Next.js", "REST APIs", "Microservice Architecture", "Docker", "Docker Compose", "Nginx", "Linux"],
+    cloud: ["AWS EC2", "AWS Lambda", "AWS ECS", "Google Earth Engine", "Render", "Vercel", "Docker", "CI/CD"],
+    databases: ["PostgreSQL", "MongoDB", "MySQL", "Qdrant", "Redis", "Vector Search"],
     certs: ["Certified Ethical Hacker (CEH)", "Google Data Analytics"]
   }
 };

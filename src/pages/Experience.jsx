@@ -84,7 +84,7 @@ function TimelineItem({ item, index, isLast }) {
 
 export default function Experience() {
   const { siteData, isAdmin, editMode, updateData } = useAdmin();
-  const experience = siteData.experience;
+  const experience = siteData.experience || [];
 
   const addExperience = () => {
     const newExp = {

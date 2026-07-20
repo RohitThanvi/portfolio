@@ -77,7 +77,7 @@ function SkillCategory({ catKey, skills, isActive, onClick }) {
 
 export default function Skills() {
   const { siteData } = useAdmin();
-  const skills = siteData.skills;
+  const skills = siteData.skills || {};
   const [activeCategory, setActiveCategory] = useState('aiml');
 
   const certs = skills.certs || [];

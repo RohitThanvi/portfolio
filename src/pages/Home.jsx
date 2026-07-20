@@ -8,7 +8,7 @@ const ROLES = ['AI/ML Engineer', 'LLM Architect', 'Systems Builder', 'Researcher
 
 export default function Home() {
   const { siteData } = useAdmin();
-  const hero = siteData.hero;
+  const hero = siteData.hero || {};
   const canvasRef = useRef(null);
   const [roleIdx, setRoleIdx] = useState(0);
   const [displayed, setDisplayed] = useState('');
