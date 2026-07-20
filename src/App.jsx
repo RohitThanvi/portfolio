@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Analytics } from '@vercel/analytics/react';
 import { AdminProvider } from './context/AdminContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import Navbar from './components/Navbar';
@@ -71,6 +72,7 @@ export default function App() {
           </div>
         </BrowserRouter>
       </AdminProvider>
+      <Analytics />
     </ErrorBoundary>
   );
 }
