@@ -95,7 +95,7 @@ export default function Home() {
   const stats = [
     { val: '3', label: 'Internships' },
     { val: '6+', label: 'Projects' },
-    { val: '8.99', label: 'CGPA' },
+    { val: '8.80', label: 'CGPA' },
     { val: '5', label: 'Countries Served' },
   ];
 
