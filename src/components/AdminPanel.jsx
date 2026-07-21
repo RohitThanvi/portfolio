@@ -3,10 +3,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAdmin } from '../context/AdminContext';
 
 export default function AdminPanel() {
-  const { isAdmin, editMode, setEditMode, siteData, updateData, resetToDefault } = useAdmin();
+  const {
+    isAdmin, editMode, setEditMode, siteData, updateData, resetToDefault,
+    publish, publishState, publishError, setPublishState,
+  } = useAdmin();
   const [activeTab, setActiveTab] = useState('hero');
   const [showReset, setShowReset] = useState(false);
   const [minimized, setMinimized] = useState(false);
+  const [showPublishPrompt, setShowPublishPrompt] = useState(false);
+  const [publishPassword, setPublishPassword] = useState('');
 
   if (!isAdmin) return null;
 
@@ -91,6 +96,15 @@ export default function AdminPanel() {
     updateData('projects', (siteData.projects || []).filter((_, i) => i !== idx));
   };
 
+  const handlePublish = async () => {
+    if (!publishPassword) return;
+    const result = await publish(publishPassword);
+    if (result.success) {
+      setPublishPassword('');
+      setShowPublishPrompt(false);
+    }
+  };
+
   return (
     <>
       <motion.div
@@ -132,7 +146,11 @@ export default function AdminPanel() {
               </div>
 
               {editMode && (
-                <p className="panel-hint">Click on text with underline (Home/About) to edit inline. Everything else is edited below.</p>
+                <p className="panel-hint">Click on text with underline (Home/About) to edit inline. Everything else is edited below. Nothing is live for visitors until you hit Publish.</p>
+              )}
+
+              {!editMode && (
+                <p className="panel-hint">Changes below are a private draft — visitors won't see them until you hit Publish.</p>
               )}
 
               {/* Tabs */}
@@ -183,15 +201,57 @@ export default function AdminPanel() {
                 )}
               </div>
 
+              {/* Publish */}
+              <div className="publish-block">
+                {publishState === 'success' ? (
+                  <div className="publish-success">
+                    Published. Live for everyone in about a minute, once Vercel finishes redeploying.
+                    <button className="panel-icon-btn" onClick={() => setPublishState('idle')}>Dismiss</button>
+                  </div>
+                ) : !showPublishPrompt ? (
+                  <button className="publish-btn" onClick={() => setShowPublishPrompt(true)}>
+                    Publish Changes Live
+                  </button>
+                ) : (
+                  <div className="publish-confirm">
+                    <label className="field-row-label">Confirm password to publish</label>
+                    <input
+                      type="password"
+                      className="field-input"
+                      value={publishPassword}
+                      onChange={e => setPublishPassword(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && handlePublish()}
+                      autoFocus
+                    />
+                    {publishState === 'error' && <span className="publish-error">{publishError}</span>}
+                    <div className="publish-actions">
+                      <button
+                        className="publish-btn"
+                        disabled={publishState === 'publishing'}
+                        onClick={handlePublish}
+                      >
+                        {publishState === 'publishing' ? 'Publishing…' : 'Confirm & Publish'}
+                      </button>
+                      <button
+                        className="reset-no"
+                        onClick={() => { setShowPublishPrompt(false); setPublishPassword(''); setPublishState('idle'); }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Reset */}
               <div className="panel-footer">
                 {!showReset ? (
                   <button className="reset-btn" onClick={() => setShowReset(true)}>
-                    Reset to Default
+                    Discard Local Draft
                   </button>
                 ) : (
                   <div className="reset-confirm">
-                    <span>Sure? This clears all changes.</span>
+                    <span>Sure? This discards unpublished edits in this browser.</span>
                     <button className="reset-yes" onClick={() => { resetToDefault(); setShowReset(false); }}>Yes</button>
                     <button className="reset-no" onClick={() => setShowReset(false)}>No</button>
                   </div>
@@ -374,6 +434,58 @@ export default function AdminPanel() {
         .panel-footer {
           padding: 0.7rem 1rem;
           border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .publish-block {
+          padding: 0.9rem 1rem;
+          border-top: 1px solid rgba(255,255,255,0.05);
+          background: rgba(201,168,76,0.04);
+        }
+        .publish-btn {
+          width: 100%;
+          font-family: var(--font-mono);
+          font-size: 0.62rem;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          padding: 0.65rem;
+          background: var(--gold);
+          border: none;
+          color: #000;
+          font-weight: 600;
+          cursor: none;
+          transition: opacity 0.2s ease;
+        }
+        .publish-btn:hover { opacity: 0.85; }
+        .publish-btn:disabled { opacity: 0.5; }
+        .publish-confirm {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+        .publish-actions {
+          display: flex;
+          gap: 0.5rem;
+        }
+        .publish-actions .publish-btn { flex: 1; }
+        .publish-error {
+          font-size: 0.6rem;
+          color: #EF4444;
+          letter-spacing: 0.02em;
+        }
+        .publish-success {
+          font-size: 0.62rem;
+          line-height: 1.6;
+          color: #10B981;
+          letter-spacing: 0.02em;
+          display: flex;
+          flex-direction: column;
+          gap: 0.4rem;
+        }
+        .publish-success .panel-icon-btn {
+          align-self: flex-start;
+          color: var(--white-dim);
+          font-size: 0.58rem;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
         }
         .reset-btn {
           font-family: var(--font-mono);

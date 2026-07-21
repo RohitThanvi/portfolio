@@ -1,10 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { defaultData, ADMIN_USERNAME, ADMIN_PASSWORD_HASH, DATA_VERSION } from '../data/portfolio';
+import { defaultData, ADMIN_USERNAME, ADMIN_PASSWORD_HASH } from '../data/portfolio';
 
 const AdminContext = createContext();
 
-const DATA_KEY = 'portfolioData';
-const VERSION_KEY = 'portfolioDataVersion';
+const DRAFT_KEY = 'portfolioDraft';
 const MAX_LOGIN_ATTEMPTS = 5;
 const LOCKOUT_MS = 30000;
 
@@ -13,12 +12,10 @@ function isPlainObject(v) {
 }
 
 // Recursively fills in any field missing from `saved` with the value from
-// `defaults`. This is what keeps the site from crashing (or silently
-// showing blank sections) when: (a) a visitor has an older copy of the
-// data cached in localStorage from before new fields/sections existed, or
-// (b) an admin edit only touched part of the data. Arrays are taken from
-// `saved` as-is when present (that's the admin's actual content), objects
-// are merged key by key, and anything missing falls back to `defaults`.
+// `defaults`. Keeps the admin's in-progress draft from crashing pages if
+// it's missing a section that a newer publish introduced (e.g. the admin
+// has an old draft sitting in their browser from before a new section was
+// added to content.json).
 function deepMergeWithDefaults(defaults, saved) {
   if (!isPlainObject(defaults)) {
     return saved !== undefined ? saved : defaults;
@@ -42,47 +39,50 @@ async function sha256Hex(text) {
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-function loadInitialData() {
+function loadDraft() {
   try {
-    const saved = localStorage.getItem(DATA_KEY);
+    const saved = localStorage.getItem(DRAFT_KEY);
     if (!saved) return defaultData;
-    const parsed = JSON.parse(saved);
-    // Merge onto defaults rather than trusting the saved blob wholesale —
-    // this is the fix for the intermittent "client-side exception" when
-    // navigating between pages: a saved copy missing a newer field (e.g.
-    // a new experience/project section added in an update) used to leave
-    // that field `undefined`, and pages that did `siteData.experience.map(...)`
-    // with no fallback would throw. Merging guarantees every top-level
-    // section always exists.
-    return deepMergeWithDefaults(defaultData, parsed);
+    return deepMergeWithDefaults(defaultData, JSON.parse(saved));
   } catch {
-    // Corrupted JSON in localStorage — fall back to defaults instead of
-    // crashing the whole app on load.
     return defaultData;
   }
 }
 
 export const AdminProvider = ({ children }) => {
+  // Regular visitors ALWAYS see `defaultData` — the actual published
+  // content.json baked into this build. Nothing here ever touches their
+  // localStorage. Only once someone is logged in as admin does siteData
+  // switch to a draft (loaded from this browser's own localStorage) that
+  // they can edit and preview before publishing it for everyone.
   const [isAdmin, setIsAdmin] = useState(false);
-  const [siteData, setSiteData] = useState(loadInitialData);
+  const [siteData, setSiteData] = useState(defaultData);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [publishState, setPublishState] = useState('idle'); // idle | publishing | success | error
+  const [publishError, setPublishError] = useState('');
   const attempts = useRef({ count: 0, lockedUntil: 0 });
 
   useEffect(() => {
-    try {
-      localStorage.setItem(DATA_KEY, JSON.stringify(siteData));
-      localStorage.setItem(VERSION_KEY, String(DATA_VERSION));
-    } catch {
-      // localStorage can throw (private browsing, quota exceeded, etc) —
-      // editing still works for the current session, it just won't persist.
-    }
-  }, [siteData]);
-
-  useEffect(() => {
     const adminSession = sessionStorage.getItem('adminSession');
-    if (adminSession === 'true') setIsAdmin(true);
+    if (adminSession === 'true') {
+      setIsAdmin(true);
+      setSiteData(loadDraft());
+    }
   }, []);
+
+  // Only persist a draft while logged in as admin — this is what makes
+  // in-progress edits survive a refresh during an editing session,
+  // without ever writing to a regular visitor's browser storage.
+  useEffect(() => {
+    if (!isAdmin) return;
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(siteData));
+    } catch {
+      // localStorage can throw (private browsing, quota, etc) — editing
+      // still works for the current session, it just won't survive a reload.
+    }
+  }, [siteData, isAdmin]);
 
   const login = async (username, password) => {
     const now = Date.now();
@@ -97,6 +97,7 @@ export const AdminProvider = ({ children }) => {
     if (ok) {
       attempts.current = { count: 0, lockedUntil: 0 };
       setIsAdmin(true);
+      setSiteData(loadDraft());
       sessionStorage.setItem('adminSession', 'true');
       setShowLoginModal(false);
       return { success: true };
@@ -114,6 +115,7 @@ export const AdminProvider = ({ children }) => {
   const logout = () => {
     setIsAdmin(false);
     setEditMode(false);
+    setSiteData(defaultData);
     sessionStorage.removeItem('adminSession');
   };
 
@@ -135,13 +137,40 @@ export const AdminProvider = ({ children }) => {
     });
   };
 
-  const resetToDefault = () => {
+  const discardDraft = () => {
     setSiteData(defaultData);
+    try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
+  };
+
+  // "Reset to Default" in the panel — same as discarding the draft.
+  const resetToDefault = discardDraft;
+
+  // Sends the current draft to the serverless publish endpoint, which
+  // commits it to content.json in the repo (see /api/publish.js). A
+  // successful publish triggers Vercel to redeploy with the new content,
+  // so it becomes the new `defaultData` for every visitor once that
+  // finishes (usually under a minute). We then clear the local draft
+  // since it has effectively become the new baseline.
+  const publish = async (password) => {
+    setPublishState('publishing');
+    setPublishError('');
     try {
-      localStorage.setItem(DATA_KEY, JSON.stringify(defaultData));
-      localStorage.setItem(VERSION_KEY, String(DATA_VERSION));
-    } catch {
-      // ignore — see note above
+      const res = await fetch('/api/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password, data: siteData }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(body.error || `Publish failed (${res.status})`);
+      }
+      try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
+      setPublishState('success');
+      return { success: true };
+    } catch (err) {
+      setPublishState('error');
+      setPublishError(err.message || 'Publish failed.');
+      return { success: false, error: err.message || 'Publish failed.' };
     }
   };
 
@@ -150,7 +179,9 @@ export const AdminProvider = ({ children }) => {
       isAdmin, login, logout,
       showLoginModal, setShowLoginModal,
       editMode, setEditMode,
-      siteData, updateData, updateNestedData, resetToDefault
+      siteData, updateData, updateNestedData,
+      resetToDefault, discardDraft,
+      publish, publishState, publishError, setPublishState,
     }}>
       {children}
     </AdminContext.Provider>
