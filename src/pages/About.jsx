@@ -93,7 +93,7 @@ export default function About() {
             <Reveal delay={0.2}>
               <div className="profile-card">
                 <div className="profile-avatar">
-                  <div className="avatar-initials">RT</div>
+                  <img src="/avatar.jpg" alt="Rohit Thanvi" className="avatar-photo" />
                   <div className="avatar-ring" />
                   <div className="avatar-ring ring2" />
                 </div>
@@ -263,19 +263,14 @@ export default function About() {
           width: 80px; height: 80px;
           margin-bottom: 1.5rem;
         }
-        .avatar-initials {
+        .avatar-photo {
           width: 80px; height: 80px;
           border-radius: 50%;
-          background: linear-gradient(135deg, var(--blue), var(--blue-dim));
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-family: var(--font-display);
-          font-size: 1.8rem;
-          letter-spacing: 0.1em;
-          color: var(--white);
+          object-fit: cover;
+          object-position: center 20%;
           position: relative;
           z-index: 1;
+          display: block;
         }
         .avatar-ring {
           position: absolute;
