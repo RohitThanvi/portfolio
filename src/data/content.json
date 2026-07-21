@@ -24,6 +24,22 @@
       "status": "Presented",
       "year": "2026",
       "description": "Presented at NICE-TEAS Europe 2026 (July 3–5, 2026), hosted by the Department of Digital Systems, University of Thessaly, in partnership with Apex University Jaipur, indexed under Springer Scopus."
+    },
+    {
+      "id": 1784635828876,
+      "title": "Bio-Lock: A Cascaded Dual-Modality Biometric Authentication System Using Independent Deep Learning Models for ECG and EEG Signals",
+      "conference": "",
+      "status": "Under Review",
+      "year": "2026",
+      "description": ""
+    },
+    {
+      "id": 1784635925428,
+      "title": "Hybrid Machine Learning Approach for Data Driven Modeling of GaN HEMTs",
+      "conference": "",
+      "status": "Under Review",
+      "year": "2026",
+      "description": ""
     }
   ],
   "experience": [
