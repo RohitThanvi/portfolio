@@ -37,6 +37,18 @@ browser.
 That's it — after that, "Publish Changes Live" in the admin panel works
 end to end.
 
+### Gallery
+
+The Gallery page (`/gallery`) is separate from the draft/publish flow
+above — as admin, uploading or deleting a photo there commits directly
+to the repo immediately (both the image file under `public/gallery/`
+and the entry in `content.json`), the same way a blog's "publish" button
+would. There's no draft step for gallery photos: what you upload is what
+visitors see, once Vercel finishes redeploying (usually under a minute).
+
+Uses the same `GITHUB_TOKEN` env var as the main publish flow — no extra
+setup needed beyond what's above.
+
 ### Changing the admin password
 
 The password isn't stored in plaintext anywhere — only its SHA-256 hash,

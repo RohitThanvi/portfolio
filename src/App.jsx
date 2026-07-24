@@ -14,6 +14,7 @@ import Experience from './pages/Experience';
 import Projects from './pages/Projects';
 import Skills from './pages/Skills';
 import Research from './pages/Research';
+import Gallery from './pages/Gallery';
 import Contact from './pages/Contact';
 import './styles/globals.css';
 
@@ -47,6 +48,7 @@ function AnimatedRoutes() {
           <Route path="/projects" element={<Projects />} />
           <Route path="/skills" element={<Skills />} />
           <Route path="/research" element={<Research />} />
+          <Route path="/gallery" element={<Gallery />} />
           <Route path="/contact" element={<Contact />} />
         </Routes>
       </motion.div>

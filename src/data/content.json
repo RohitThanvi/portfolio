@@ -9,21 +9,21 @@
     "phone": "+91 84418 93995"
   },
   "about": {
-    "bio": "AI/ML engineering undergraduate at SKIT Jaipur with a relentless focus on building systems that matter — from production-grade LLM pipelines to real-time cognitive fatigue detection for industrial workers. I work at the intersection of deep learning research and scalable engineering, where models need to run in the real world, not just on paper.",
+    "bio": "AI/ML engineering undergraduate at SKIT Jaipur with a relentless focus on building systems that matter \u2014 from production-grade LLM pipelines to real-time cognitive fatigue detection for industrial workers. I work at the intersection of deep learning research and scalable engineering, where models need to run in the real world, not just on paper.",
     "bio2": "My work spans custom transformer architectures, edge-deployable neural networks, geospatial intelligence platforms, and distributed backend systems. I've built a production legal-AI research platform at CURAJ, worked at ISRO, led engineering teams at Brudite, and contributed to systems that serve users across five countries.",
     "cgpa": "8.80",
     "college": "Swami Keshvanand Institute of Technology",
     "degree": "B.Tech in Computer Science Engineering",
-    "year": "2023 – Present"
+    "year": "2023 \u2013 Present"
   },
   "research": [
     {
       "id": 1,
-      "title": "Data-Efficient Continuous Manifold Reconstruction of GaN HEMT Physics via Fourier-Based Kolmogorov–Arnold Networks",
-      "conference": "2nd Networking International Conference on Emerging Trends in Expert Applications and Security (NICE-TEAS Europe 2026) — Dept. of Digital Systems, University of Thessaly, Larissa, Greece",
+      "title": "Data-Efficient Continuous Manifold Reconstruction of GaN HEMT Physics via Fourier-Based Kolmogorov\u2013Arnold Networks",
+      "conference": "2nd Networking International Conference on Emerging Trends in Expert Applications and Security (NICE-TEAS Europe 2026) \u2014 Dept. of Digital Systems, University of Thessaly, Larissa, Greece",
       "status": "Presented",
       "year": "2026",
-      "description": "Presented at NICE-TEAS Europe 2026 (July 3–5, 2026), hosted by the Department of Digital Systems, University of Thessaly, in partnership with Apex University Jaipur, indexed under Springer Scopus."
+      "description": "Presented at NICE-TEAS Europe 2026 (July 3\u20135, 2026), hosted by the Department of Digital Systems, University of Thessaly, in partnership with Apex University Jaipur, indexed under Springer Scopus."
     },
     {
       "id": 1784635828876,
@@ -47,7 +47,7 @@
       "id": 4,
       "company": "Central University of Rajasthan (CURAJ)",
       "role": "Project Intern",
-      "period": "May 2026 – Jul 2026",
+      "period": "May 2026 \u2013 Jul 2026",
       "location": "Ajmer, India",
       "bullets": [
         "Developed a production-grade, 6-service full-stack Indian legal AI research platform using Docker Compose, FastAPI, Next.js 15, PostgreSQL 16, Qdrant, Redis, and Nginx.",
@@ -70,11 +70,11 @@
       "id": 2,
       "company": "Brudite Pvt. Ltd.",
       "role": "Software Engineering Intern",
-      "period": "Jun 2025 – Aug 2025",
+      "period": "Jun 2025 \u2013 Aug 2025",
       "location": "Jaipur, India",
       "bullets": [
         "Delivered sub-2s LLM response latency at concurrent load by designing and building the FastAPI backend for MindGrid, an AI debate platform, with PostgreSQL for persistent session state.",
-        "Led a team of 5 interns through full-stack delivery — scoping REST API contracts, reviewing pull requests, and coordinating integration milestones.",
+        "Led a team of 5 interns through full-stack delivery \u2014 scoping REST API contracts, reviewing pull requests, and coordinating integration milestones.",
         "Implemented an ELO-based ranking engine paired with an LLM argument-evaluation module, applying prompt engineering and tool/function calling to score debate quality programmatically."
       ]
     },
@@ -82,7 +82,7 @@
       "id": 3,
       "company": "Software Technology Parks of India (STPI)",
       "role": "Software Engineering Intern",
-      "period": "Jun 2025 – Aug 2025",
+      "period": "Jun 2025 \u2013 Aug 2025",
       "location": "Jaipur, India",
       "bullets": [
         "Reduced environment-related deployment failures by 50% by containerizing 4 microservices with Docker, standardizing runtime configs across dev and staging environments.",
@@ -174,7 +174,7 @@
         "Sentinel-2"
       ],
       "highlights": [
-        "Live in production — 5 countries, <8s end-to-end latency",
+        "Live in production \u2014 5 countries, <8s end-to-end latency",
         "LLM tool-calling to translate natural language into Earth Engine API calls",
         "Processes 9 environmental metrics across Sentinel-2/Landsat/MODIS datasets"
       ],
@@ -230,7 +230,7 @@
       "id": 6,
       "name": "RohitChess",
       "fullName": "RohitChess 1.0: Custom Chess Engine",
-      "description": "A complete UCI-compliant chess engine in C++ targeting 1800–2000 Elo. Built with 0x88 board representation, iterative deepening alpha-beta pruning, Zobrist hashing, and MVV-LVA move ordering.",
+      "description": "A complete UCI-compliant chess engine in C++ targeting 1800\u20132000 Elo. Built with 0x88 board representation, iterative deepening alpha-beta pruning, Zobrist hashing, and MVV-LVA move ordering.",
       "tech": [
         "C++",
         "UCI Protocol",
@@ -239,7 +239,7 @@
         "0x88"
       ],
       "highlights": [
-        "Target rating: 1800–2000 Elo",
+        "Target rating: 1800\u20132000 Elo",
         "0x88 board representation with iterative deepening",
         "Zobrist hashing + MVV-LVA move ordering"
       ],
@@ -302,5 +302,6 @@
       "Certified Ethical Hacker (CEH)",
       "Google Data Analytics"
     ]
-  }
+  },
+  "gallery": []
 }

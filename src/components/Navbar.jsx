@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { path: '/projects', label: 'Projects' },
   { path: '/skills', label: 'Skills' },
   { path: '/research', label: 'Research' },
+  { path: '/gallery', label: 'Gallery' },
   { path: '/contact', label: 'Contact' },
 ];
 
